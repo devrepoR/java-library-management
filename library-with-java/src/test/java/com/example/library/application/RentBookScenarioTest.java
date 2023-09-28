@@ -8,23 +8,24 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @DisplayName("도서 상태 변경 시나리오 테스트")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class BookScenarioTest {
+class RentBookScenarioTest {
 
-    private Book book;
+    private RentedBook rentedBook;
 
     @Order(1)
     @Test
     void 도서_생성_테스트() {
         // given
-        book = new Book(
+        Book book = new Book(
                 "CS0001"
                 , "Clean Code"
                 , "로버트 C. 마틴"
                 , "5000"
         );
+        rentedBook = new RentedBook(book);
 
         // then
-        assertThat(book.getStatus()).isEqualTo(Book.BookStatus.AVAILABLE);
+        assertThat(rentedBook.isAvailable()).isTrue();
     }
 
     @Order(2)
@@ -32,10 +33,10 @@ class BookScenarioTest {
     void 도서_대출중_테스트() {
 
         // when
-        book.changeStatus(Book.BookStatus.RENTED);
+        rentedBook.returnBook();
 
         // then
-        assertThat(book.getStatus()).isEqualTo(Book.BookStatus.RENTED);
+        assertThat(rentedBook.isRented()).isTrue();
     }
 
     @Order(3)
@@ -43,10 +44,10 @@ class BookScenarioTest {
     void 도서_도서_정리중_테스트() {
 
         // when
-        book.changeStatus(Book.BookStatus.ORGANIZING);
+        rentedBook.organize();
 
         // then
-        assertThat(book.getStatus()).isEqualTo(Book.BookStatus.ORGANIZING);
+        assertThat(rentedBook.getStatus()).isEqualTo(RentedBook.BookStatus.ORGANIZING);
     }
 
     @Order(4)
@@ -54,9 +55,9 @@ class BookScenarioTest {
     void 도서_대여_가능_테스트() {
 
         // when
-        book.changeStatus(Book.BookStatus.AVAILABLE);
+        rentedBook.updateStatus(RentedBook.BookStatus.AVAILABLE);
 
         // then
-        assertThat(book.getStatus()).isEqualTo(Book.BookStatus.AVAILABLE);
+        assertThat(rentedBook.getStatus()).isEqualTo(RentedBook.BookStatus.AVAILABLE);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.library.storage;
 
 import com.example.library.application.Book;
+import com.example.library.application.RentedBook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -24,6 +25,9 @@ class MemoryIssueDataAccessTest {
         this.memoryIssueDataAccess = new MemoryIssueDataAccess();
     }
 
+    /**
+     * 문제가 발생하는 테스트
+     */
     @Test
     void 도서_등록_테스트() throws InterruptedException {
 
@@ -36,7 +40,8 @@ class MemoryIssueDataAccessTest {
         for (int i = 0; i < SIZE; i++) {
             executorService.execute(() -> {
                 int seq = sequence.getAndIncrement();
-                memoryIssueDataAccess.addBook(new Book("CS" + seq, "토비의 스프링" + seq, "토비", "500"));
+                Book book = new Book("CS" + seq, "토비의 스프링" + seq, "토비", "500");
+                memoryIssueDataAccess.addBook(new RentedBook(book));
                 countDownLatch.countDown();
             });
         }
@@ -44,7 +49,7 @@ class MemoryIssueDataAccessTest {
         // Wait for all threads to finish
         countDownLatch.await();
 
-        assertThat(memoryIssueDataAccess.findAllBooks().size()).isEqualTo(SIZE);
+        assertThat(memoryIssueDataAccess.countBooks()).isNotEqualTo(SIZE);
 
     }
 }

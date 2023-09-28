@@ -1,6 +1,7 @@
 package com.example.library.storage;
 
 import com.example.library.application.Book;
+import com.example.library.application.RentedBook;
 import org.junit.jupiter.api.*;
 
 import java.io.BufferedWriter;
@@ -30,22 +31,22 @@ class FileDataAccessTest {
     @Test
     void 도서_추가_테스트() {
         Book book = new Book("CS001", "Test Book", "Author", "100");
-        fileDataAccess.addBook(book);
+        fileDataAccess.addBook(new RentedBook(book));
 
-        Optional<Book> retrievedBook = fileDataAccess.findBookByIsbn("CS001");
+        Optional<RentedBook> retrievedBook = fileDataAccess.findBookByIsbn("CS001");
         assertThat(retrievedBook).isPresent();
     }
 
     @Test
     void 도서_상태_변경_테스트() {
         Book book = new Book("CS002", "Test Book", "Author", "100");
-        fileDataAccess.addBook(book);
+        fileDataAccess.addBook(new RentedBook(book));
 
-        Book.BookStatus newStatus = Book.BookStatus.RENTED;
+        RentedBook.BookStatus newStatus = RentedBook.BookStatus.RENTED;
         assertThat(fileDataAccess.updateBookStatus("CS002", newStatus))
                 .isEqualTo(true);
 
-        Optional<Book> retrievedBook = fileDataAccess.findBookByIsbn("CS002");
+        Optional<RentedBook> retrievedBook = fileDataAccess.findBookByIsbn("CS002");
 
         assertThat(retrievedBook)
                 .isPresent()
@@ -56,23 +57,23 @@ class FileDataAccessTest {
     @Test
     void 도서_상태_변경_도서정리중_테스트() {
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(LIBRARY_CSV))) {
-            writer.write("CS001,Test Book,Author,100,RENTED");
+            writer.write("CS001,Test Book,Author,100,2023-09-29,2023-09-29 23:59:59,RENTED");
             writer.newLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        assertThat(fileDataAccess.updateBookStatus("CS001", Book.BookStatus.ORGANIZING))
+        assertThat(fileDataAccess.updateBookStatus("CS001", RentedBook.BookStatus.ORGANIZING))
                 .isEqualTo(true);
 
         fileDataAccess.findBookByIsbn("CS001")
-                .ifPresent(b -> assertThat(b.getStatus()).isEqualTo(Book.BookStatus.ORGANIZING));
+                .ifPresent(b -> assertThat(b.getStatus()).isEqualTo(RentedBook.BookStatus.ORGANIZING));
     }
 
     @Test
     void 도서_삭제_테스트() {
         Book book = new Book("CS003", "Test Book", "Author", "100");
-        fileDataAccess.addBook(book);
+        fileDataAccess.addBook(new RentedBook(book));
 
         assertThat(fileDataAccess.removeBookByIsbn("CS003")).isTrue();
 

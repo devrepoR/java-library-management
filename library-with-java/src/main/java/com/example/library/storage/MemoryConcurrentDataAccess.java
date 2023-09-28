@@ -1,6 +1,6 @@
 package com.example.library.storage;
 
-import com.example.library.application.Book;
+import com.example.library.application.RentedBook;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,17 +10,17 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MemoryConcurrentDataAccess implements BookDataAccess {
 
-    private final Map<String, Book> books = new ConcurrentHashMap<>();
+    private final Map<String, RentedBook> books = new ConcurrentHashMap<>();
 
-    public void addBook(Book book) {
+    public void addBook(RentedBook book) {
         books.put(book.getIsbn(), book);
     }
 
-    public Optional<Book> findBookByIsbn(String isbn) {
+    public Optional<RentedBook> findBookByIsbn(String isbn) {
         return Optional.ofNullable(books.get(isbn));
     }
 
-    public List<Book> findAllBooks() {
+    public List<RentedBook> findAllBooks() {
         return new ArrayList<>(books.values());
     }
 
@@ -29,10 +29,10 @@ public class MemoryConcurrentDataAccess implements BookDataAccess {
         return books.size();
     }
 
-    public boolean updateBookStatus(String isbn, Book.BookStatus newStatus) {
-        Book book = books.get(isbn);
+    public boolean updateBookStatus(String isbn, RentedBook.BookStatus newStatus) {
+        RentedBook book = books.get(isbn);
         if (book != null) {
-            book.changeStatus(newStatus);
+            book.updateStatus(newStatus);
             return true;
         }
         return false;

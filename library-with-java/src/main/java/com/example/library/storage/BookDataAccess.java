@@ -1,20 +1,20 @@
 package com.example.library.storage;
 
-import com.example.library.application.Book;
+import com.example.library.application.RentedBook;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface BookDataAccess {
-    void addBook(Book book);
+    void addBook(RentedBook book);
 
-    Optional<Book> findBookByIsbn(String isbn);
+    Optional<RentedBook> findBookByIsbn(String isbn);
 
-    List<Book> findAllBooks();
+    List<RentedBook> findAllBooks();
 
     int countBooks();
 
-    boolean updateBookStatus(String isbn, Book.BookStatus newStatus);
+    boolean updateBookStatus(String isbn, RentedBook.BookStatus newStatus);
 
     boolean removeBookByIsbn(String isbn);
 }

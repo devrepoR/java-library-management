@@ -1,6 +1,7 @@
 package com.example.library.storage;
 
 import com.example.library.application.Book;
+import com.example.library.application.RentedBook;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -38,7 +39,8 @@ class FileChannelDataAccessTest {
         for (int i = 0; i < THREAD_COUNT; i++) {
             executorService.execute(() -> {
                 int count = atomic.incrementAndGet();
-                fileDataAccess.addBook(new Book("CS" + count, "Test Book", "Author", "100"));
+                Book book = new Book("CS" + count, "Test Book", "Author", "100");
+                fileDataAccess.addBook(new RentedBook(book));
                 latch.countDown();
             });
         }
@@ -59,7 +61,7 @@ class FileChannelDataAccessTest {
         for (int i = 0; i < THREAD_COUNT; i++) {
             executorService.execute(() -> {
                 int count = atomic.incrementAndGet();
-                fileDataAccess.updateBookStatus("CS" + count, Book.BookStatus.RENTED);
+                fileDataAccess.updateBookStatus("CS" + count, RentedBook.BookStatus.RENTED);
                 latch.countDown();
             });
         }
@@ -70,7 +72,7 @@ class FileChannelDataAccessTest {
 
         long rentedBooksCount = fileDataAccess.findAllBooks()
                 .stream()
-                .filter(book -> book.getStatus() == Book.BookStatus.RENTED)
+                .filter(book -> book.getStatus() == RentedBook.BookStatus.RENTED)
                 .count();
 
         assertThat(rentedBooksCount).isEqualTo(THREAD_COUNT); // 모든 책이 RENTED 상태로 수정되었는지 확인

@@ -1,6 +1,7 @@
 package com.example.library.storage;
 
 import com.example.library.application.Book;
+import com.example.library.application.RentedBook;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
@@ -37,7 +38,8 @@ class FileDataAccessBulkAddTest {
         for (int i = 0; i < thread; i++) {
             executorService.execute(() -> {
                 int count = atomic.incrementAndGet();
-                fileDataAccess.addBook(new Book("CS" + count, "Test Book", "Author", "100"));
+                Book book = new Book("CS" + count, "Test Book", "Author", "100");
+                fileDataAccess.addBook(new RentedBook(book));
                 latch.countDown();
             });
         }

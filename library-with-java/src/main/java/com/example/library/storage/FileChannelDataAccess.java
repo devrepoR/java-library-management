@@ -1,6 +1,7 @@
 package com.example.library.storage;
 
 import com.example.library.application.Book;
+import com.example.library.application.RentedBook;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -51,7 +52,7 @@ public class FileChannelDataAccess implements BookDataAccess {
     }
 
     @Override
-    public void addBook(Book book) {
+    public void addBook(RentedBook book) {
         readWriteLock.writeLock().lock();
         try {
             // 임시 파일 생성
@@ -76,26 +77,26 @@ public class FileChannelDataAccess implements BookDataAccess {
 
 
     @Override
-    public Optional<Book> findBookByIsbn(String isbn) {
+    public Optional<RentedBook> findBookByIsbn(String isbn) {
         return readBooks().stream()
                 .filter(book -> book.getIsbn().equals(isbn))
                 .findFirst();
     }
 
     @Override
-    public List<Book> findAllBooks() {
+    public List<RentedBook> findAllBooks() {
         return readBooks();
     }
 
     @Override
-    public boolean updateBookStatus(String isbn, Book.BookStatus newStatus) {
+    public boolean updateBookStatus(String isbn, RentedBook.BookStatus newStatus) {
         readWriteLock.writeLock().lock();
         try {
-            List<Book> books = readBooks();
+            List<RentedBook> books = readBooks();
             boolean isUpdated = false;
-            for (Book book : books) {
+            for (RentedBook book : books) {
                 if (book.getIsbn().equals(isbn)) {
-                    book.changeStatus(newStatus);
+                    book.updateStatus(newStatus);
                     isUpdated = true;
                     break;
                 }
@@ -112,7 +113,7 @@ public class FileChannelDataAccess implements BookDataAccess {
 
     @Override
     public boolean removeBookByIsbn(String isbn) {
-        List<Book> books = readBooks();
+        List<RentedBook> books = readBooks();
         int initialSize = books.size();
         books.removeIf(book -> book.getIsbn().equals(isbn));
         if (books.size() < initialSize) {
@@ -123,12 +124,12 @@ public class FileChannelDataAccess implements BookDataAccess {
         return false;
     }
 
-    private void writeBooks(List<Book> books) {
+    private void writeBooks(List<RentedBook> books) {
         readWriteLock.writeLock().lock();
         try {
             try (FileChannel channel = FileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
                 channel.truncate(0);
-                for (Book book : books) {
+                for (RentedBook book : books) {
                     String data = bookToCsv(book) + System.lineSeparator();
                     channel.write(ByteBuffer.wrap(data.getBytes(StandardCharsets.UTF_8)));
                 }
@@ -144,10 +145,10 @@ public class FileChannelDataAccess implements BookDataAccess {
         return readBooks().size();
     }
 
-    private List<Book> readBooks() {
+    private List<RentedBook> readBooks() {
         readWriteLock.readLock().lock();
         try {
-            List<Book> books = new ArrayList<>();
+            List<RentedBook> books = new ArrayList<>();
             try (FileChannel channel = FileChannel.open(path, StandardOpenOption.READ)) {
                 ByteBuffer buffer = ByteBuffer.allocate((int) channel.size());
                 channel.read(buffer);
@@ -175,17 +176,13 @@ public class FileChannelDataAccess implements BookDataAccess {
         }
     }
 
-    // Creating a BufferedWriter instance in a separate method to avoid duplication
-    private BufferedWriter getBufferedWriter() throws IOException {
-        return Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-    }
-
-    private Book csvToBook(String csv) {
+    private RentedBook csvToBook(String csv) {
         String[] fields = csv.split(",");
-        return new Book(fields[0], fields[1], fields[2], fields[3], Book.BookStatus.of(fields[4]));
+        Book book = new Book(fields[0], fields[1], fields[2], fields[3]);
+        return new RentedBook(book, fields[4], fields[5], RentedBook.BookStatus.valueOf(fields[6]));
     }
 
-    private String bookToCsv(Book book) {
-        return String.join(",", book.getIsbn(), book.getSubject(), book.getAuthor(), String.valueOf(book.getTotalPageCnt()), book.getStatus().name());
+    private String bookToCsv(RentedBook rentedBook) {
+        return rentedBook.toString();
     }
 }

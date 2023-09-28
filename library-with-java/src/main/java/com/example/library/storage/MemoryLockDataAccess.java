@@ -1,16 +1,16 @@
 package com.example.library.storage;
 
-import com.example.library.application.Book;
+import com.example.library.application.RentedBook;
 
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class MemoryLockDataAccess implements BookDataAccess {
-    private final Map<String, Book> books = new HashMap<>();
+    private final Map<String, RentedBook> books = new HashMap<>();
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public void addBook(Book book) {
+    public void addBook(RentedBook book) {
         lock.writeLock().lock();
         try {
             books.put(book.getIsbn(), book);
@@ -19,7 +19,7 @@ public class MemoryLockDataAccess implements BookDataAccess {
         }
     }
 
-    public Optional<Book> findBookByIsbn(String isbn) {
+    public Optional<RentedBook> findBookByIsbn(String isbn) {
         lock.readLock().lock();
         try {
             return Optional.ofNullable(books.get(isbn));
@@ -28,7 +28,7 @@ public class MemoryLockDataAccess implements BookDataAccess {
         }
     }
 
-    public List<Book> findAllBooks() {
+    public List<RentedBook> findAllBooks() {
         lock.readLock().lock();
         try {
             return new ArrayList<>(books.values());
@@ -42,12 +42,12 @@ public class MemoryLockDataAccess implements BookDataAccess {
         return books.size();
     }
 
-    public boolean updateBookStatus(String isbn, Book.BookStatus newStatus) {
+    public boolean updateBookStatus(String isbn, RentedBook.BookStatus newStatus) {
         lock.writeLock().lock();
         try {
-            Book book = books.get(isbn);
+            RentedBook book = books.get(isbn);
             if (book != null) {
-                book.changeStatus(newStatus);
+                book.updateStatus(newStatus);
                 return true;
             }
             return false;

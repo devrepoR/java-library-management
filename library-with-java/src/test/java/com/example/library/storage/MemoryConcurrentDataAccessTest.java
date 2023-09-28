@@ -1,6 +1,7 @@
 package com.example.library.storage;
 
 import com.example.library.application.Book;
+import com.example.library.application.RentedBook;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -36,7 +37,8 @@ class MemoryConcurrentDataAccessTest {
         for (int i = 0; i < SIZE; i++) {
             executorService.execute(() -> {
                 int seq = sequence.getAndIncrement();
-                memoryLockDataAccess.addBook(new Book("CS" + seq, "토비의 스프링" + seq, "토비", "500"));
+                Book book = new Book("CS" + seq, "토비의 스프링" + seq, "토비", "500");
+                memoryLockDataAccess.addBook(new RentedBook(book));
                 countDownLatch.countDown();
             });
         }
