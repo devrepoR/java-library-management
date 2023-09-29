@@ -24,16 +24,23 @@ public class FileChannelDataAccess implements BookDataAccess {
     private final Path path;
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
-    public FileChannelDataAccess(String filePath) throws IOException {
+    public FileChannelDataAccess(String filePath) {
+        if(filePath == null || filePath.isEmpty()) {
+            throw new IllegalArgumentException("파일 경로가 잘못되었습니다.");
+        }
         this.path = Paths.get(filePath);
+        filePath();
+    }
 
+    private void filePath() {
         // Ensure the parent directory exists
         Path parentDir = path.getParent();
         if (parentDir != null && Files.notExists(parentDir)) {
             try {
                 Files.createDirectories(parentDir);
             } catch (IOException e) {
-                throw new IOException("디렉토리 생성 실패 : " + parentDir, e);
+                log.warning("디렉토리 생성 실패 : " + parentDir);
+                throw new RuntimeException("디렉토리 생성 실패 : " + parentDir, e);
             }
         }
 
@@ -42,12 +49,14 @@ public class FileChannelDataAccess implements BookDataAccess {
             try {
                 Files.createFile(path);
             } catch (IOException e) {
-                throw new IOException("파일 생성 실패 : " + path, e);
+                log.warning("파일 생성 실패 : " + path);
+                throw new RuntimeException("파일 생성 실패 : " + path, e);
             }
         }
 
         if (!Files.isWritable(path)) {
-            throw new IOException(path + " 에 쓰기 권한이 없습니다.");
+            log.warning(path + " 에 쓰기 권한이 없습니다.");
+            throw new RuntimeException(path + " 에 쓰기 권한이 없습니다.");
         }
     }
 

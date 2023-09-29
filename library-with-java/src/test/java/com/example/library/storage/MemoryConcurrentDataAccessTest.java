@@ -22,7 +22,7 @@ class MemoryConcurrentDataAccessTest {
 
     @BeforeEach
     void setUp() {
-        memoryLockDataAccess = new MemoryConcurrentDataAccess();
+        memoryLockDataAccess = new MemoryConcurrentDataAccess(null);
     }
 
     @Test

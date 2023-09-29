@@ -12,6 +12,9 @@ public class MemoryConcurrentDataAccess implements BookDataAccess {
 
     private final Map<String, RentedBook> books = new ConcurrentHashMap<>();
 
+    public MemoryConcurrentDataAccess(String path) {
+    }
+
     public void addBook(RentedBook book) {
         books.put(book.getIsbn(), book);
     }

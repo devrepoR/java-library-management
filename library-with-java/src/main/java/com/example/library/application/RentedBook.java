@@ -22,7 +22,7 @@ public class RentedBook {
     }
 
     public RentedBook(Book book, String rentedAt, BookStatus status) {
-        this(book, rentedAt, "", status);
+        this(book, rentedAt, null, status);
     }
 
     public RentedBook(Book book, String rentedAt, String returnedAt, BookStatus status) {
