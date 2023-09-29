@@ -2,30 +2,31 @@ package com.example.library.application;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.logging.Logger;
 
+import static java.time.LocalDateTime.now;
+
 public class RentedBook {
     private final Book book;
-    private final String rentedAt;
+    private final LocalDateTime rentedAt;
     private BookStatus status;
-    private String returnedAt;
+    private LocalDateTime returnedAt;
 
     public RentedBook(Book book) {
-        this(book, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), BookStatus.AVAILABLE);
+        this(book, now(), BookStatus.ORGANIZING);
     }
 
     public RentedBook(Book book, BookStatus status) {
-        this(book, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")), status);
+        this(book, now(), status);
     }
 
-    public RentedBook(Book book, String rentedAt, BookStatus status) {
+    public RentedBook(Book book, LocalDateTime rentedAt, BookStatus status) {
         this(book, rentedAt, null, status);
     }
 
-    public RentedBook(Book book, String rentedAt, String returnedAt, BookStatus status) {
+    public RentedBook(Book book, LocalDateTime rentedAt, LocalDateTime returnedAt, BookStatus status) {
         this.book = book;
         this.rentedAt = rentedAt;
         this.returnedAt = returnedAt;
@@ -34,17 +35,16 @@ public class RentedBook {
 
     public void returnBook() {
         this.status = BookStatus.RENTED;
-        this.returnedAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        this.returnedAt = now();
     }
 
     public boolean isReturned() {
         return returnedAt != null;
     }
 
-    public boolean isOrganizingTimeOver(Duration organizingDuration) {
-        if (!isReturned()) return false;
-
-        Duration durationSinceReturn = Duration.between(LocalDateTime.parse(returnedAt, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), LocalDateTime.now());
+    public boolean isOrganizingTimeOver(Duration organizingDuration, LocalDateTime timeAt) {
+        if (!isOrganized()) return false;
+        Duration durationSinceReturn = Duration.between(returnedAt, timeAt);
         return durationSinceReturn.compareTo(organizingDuration) >= 0;
     }
 
@@ -56,11 +56,11 @@ public class RentedBook {
         return book;
     }
 
-    public String getRentedTime() {
+    public LocalDateTime getRentedTime() {
         return rentedAt;
     }
 
-    public String getReturnedTime() {
+    public LocalDateTime getReturnedTime() {
         return returnedAt;
     }
 
@@ -71,6 +71,7 @@ public class RentedBook {
     public boolean isAvailable() {
         return this.status == BookStatus.AVAILABLE;
     }
+
     public boolean isRented() {
         return this.status == BookStatus.RENTED;
     }
@@ -82,6 +83,7 @@ public class RentedBook {
     public void updateStatus(BookStatus status) {
         this.status = status;
     }
+
     public BookStatus getStatus() {
         return status;
     }
@@ -112,7 +114,14 @@ public class RentedBook {
 
     @Override
     public String toString() {
-        return String.join(",", book.getIsbn(), book.getSubject(), book.getAuthor(), book.getTotalPageCnt(), rentedAt, returnedAt, status.name());
+        String rented = this.rentedAt != null ? this.rentedAt.toString() : "";
+        String returned = this.returnedAt != null ? this.returnedAt.toString() : "";
+
+        return String.join(",", book.getIsbn(), book.getSubject(), book.getAuthor(),
+                book.getTotalPageCnt(),
+                rented,
+                returned,
+                status.name());
     }
 
     public enum BookStatus {

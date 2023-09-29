@@ -44,8 +44,20 @@ public class LibraryInterfaceImpl implements LibraryInterface {
 
     @Override
     public RentedBook rentBook(String isbn) {
-        dataAccess.findBookByIsbn(isbn)
+        RentedBook rentedBook = dataAccess.findBookByIsbn(isbn)
                 .orElseThrow(() -> new RuntimeException("Book is not found"));
+
+        if(rentedBook.isRented()) {
+            throw new RuntimeException("대여중인 책은 대여할 수 없습니다.");
+        }
+
+        if(rentedBook.isOrganized()) {
+            throw new RuntimeException("정리중인 책은 대여할 수 없습니다.");
+        }
+
+        if(rentedBook.isLost()) {
+            throw new RuntimeException("분실된 책은 대여할 수 없습니다.");
+        }
 
         boolean updated = dataAccess.updateBookStatus(isbn, RentedBook.BookStatus.RENTED);
         if (!updated) {

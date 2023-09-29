@@ -5,6 +5,7 @@ import com.example.library.application.RentedBook;
 import org.junit.jupiter.api.*;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -82,5 +83,13 @@ class FileChannelDataAccessTest {
     @Test
     void 전체_삭제() throws IOException {
         fileDataAccess.deleteAll();
+    }
+
+    @Test
+    void 전체_조회() {
+        List<RentedBook> allBooks = fileDataAccess.findAllBooks().stream()
+                .filter(book -> book.getStatus() == RentedBook.BookStatus.ORGANIZING)
+                .toList();
+        assertThat(allBooks.size()).isEqualTo(500);
     }
 }

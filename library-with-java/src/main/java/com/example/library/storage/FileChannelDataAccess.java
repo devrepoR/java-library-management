@@ -12,8 +12,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -37,7 +39,8 @@ public class FileChannelDataAccess implements BookDataAccess {
         Path parentDir = path.getParent();
         if (parentDir != null && Files.notExists(parentDir)) {
             try {
-                Files.createDirectories(parentDir);
+                Path directories = Files.createDirectories(parentDir);
+                log.info("디렉토리 생성 : " + directories);
             } catch (IOException e) {
                 log.warning("디렉토리 생성 실패 : " + parentDir);
                 throw new RuntimeException("디렉토리 생성 실패 : " + parentDir, e);
@@ -172,6 +175,7 @@ public class FileChannelDataAccess implements BookDataAccess {
             } catch (IOException e) {
                 throw new RuntimeException("읽기 실패", e);
             }
+            log.info("[LOG] [READ] [SIZE : " + books.size() + "]");
             return books;
         } finally {
             readWriteLock.readLock().unlock();
@@ -188,7 +192,16 @@ public class FileChannelDataAccess implements BookDataAccess {
     private RentedBook csvToBook(String csv) {
         String[] fields = csv.split(",");
         Book book = new Book(fields[0], fields[1], fields[2], fields[3]);
-        return new RentedBook(book, fields[4], fields[5], RentedBook.BookStatus.valueOf(fields[6]));
+        boolean rentFlag = !Objects.isNull(fields[4]) && !fields[4].isBlank();
+        boolean returnFlag = !Objects.isNull(fields[5]) && !fields[5].isBlank();
+
+        RentedBook rentedBook = new RentedBook(
+                book,
+                rentFlag ? LocalDateTime.parse(fields[4]) : null,
+                returnFlag ? LocalDateTime.parse(fields[5]) : null,
+                RentedBook.BookStatus.valueOf(fields[6])
+        );
+        return rentedBook;
     }
 
     private String bookToCsv(RentedBook rentedBook) {

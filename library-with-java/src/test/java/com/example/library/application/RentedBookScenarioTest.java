@@ -24,7 +24,6 @@ class RentedBookScenarioTest {
         RentedBook rentedBook = new RentedBook(book);
 
         // when
-        assertThat(rentedBook.getRentedTime()).matches("\\d{4}-\\d{2}-\\d{2}");
         assertThat(rentedBook.getReturnedTime()).isNull();
         // then
         assertThat(rentedBook.isAvailable()).isTrue();

@@ -9,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -156,7 +157,7 @@ public class FileDataAccess implements BookDataAccess {
     private RentedBook csvToBook(String csv) {
         String[] fields = csv.split(",");
         Book book = new Book(fields[0], fields[1], fields[2], fields[3]);
-        return new RentedBook(book, fields[4], RentedBook.BookStatus.of(fields[6]));
+        return new RentedBook(book, LocalDateTime.parse(fields[4]), RentedBook.BookStatus.of(fields[6]));
     }
 
     private String bookToCsv(RentedBook rentedBook) {
