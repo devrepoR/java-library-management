@@ -22,8 +22,8 @@ class FileChannelDataAccessTest {
 
 
     private static final String LIBRARY_CSV = "data/library-test.csv";
-    private FileChannelDataAccess fileDataAccess;
     private static final int THREAD_COUNT = 500;
+    private FileChannelDataAccess fileDataAccess;
     @BeforeEach
     void setUp() throws IOException {
         fileDataAccess = new FileChannelDataAccess(LIBRARY_CSV);

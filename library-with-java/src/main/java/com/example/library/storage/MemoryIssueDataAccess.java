@@ -6,7 +6,11 @@ import java.util.*;
 
 public class MemoryIssueDataAccess implements BookDataAccess {
 
-    private final Map<String, RentedBook> books = new HashMap<>();
+    private final Map<String, RentedBook> books;
+
+    public MemoryIssueDataAccess() {
+        books = new HashMap<>();
+    }
 
     public void addBook(RentedBook book) {
         books.put(book.getIsbn(), book);

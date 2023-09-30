@@ -24,17 +24,18 @@ import java.util.logging.Logger;
 public class FileChannelDataAccess implements BookDataAccess {
     private static final Logger log = Logger.getLogger(FileChannelDataAccess.class.getName());
     private final Path path;
-    private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    private final ReadWriteLock readWriteLock;
 
     public FileChannelDataAccess(String filePath) {
         if(filePath == null || filePath.isEmpty()) {
             throw new IllegalArgumentException("파일 경로가 잘못되었습니다.");
         }
         this.path = Paths.get(filePath);
-        filePath();
+        validatePath();
+        this.readWriteLock = new ReentrantReadWriteLock();
     }
 
-    private void filePath() {
+    private void validatePath() {
         // Ensure the parent directory exists
         Path parentDir = path.getParent();
         if (parentDir != null && Files.notExists(parentDir)) {

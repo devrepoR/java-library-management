@@ -136,11 +136,6 @@ public class RentedBook {
             this.title = title;
         }
 
-        // 뭐.. description 은 아직 사용 x
-        public String getTitle() {
-            return title;
-        }
-
         public static BookStatus of(String bookStatus) {
             return Arrays.stream(values())
                     .filter(status -> status.name().equals(bookStatus))

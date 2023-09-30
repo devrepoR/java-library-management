@@ -15,6 +15,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class ModeFactoryTest {
 
+    private static final String TEST_CSV = "data/library-test.csv";
+
     @Test
     void 테스트모드_테스트() {
         ModeFactory testMode = ModeFactory.TEST_MODE;
@@ -24,13 +26,13 @@ class ModeFactoryTest {
     @Test
     void 운영모드_테스트() {
         ModeFactory realMode = ModeFactory.REAL_MODE;
-        assertThat(realMode.mode("data/library-test.csv")).isInstanceOf(RealMode.class);
+        assertThat(realMode.mode(TEST_CSV)).isInstanceOf(RealMode.class);
     }
 
     private static Stream<Arguments> modeList() {
         return Stream.of(
                 Arguments.of(ModeFactory.TEST_MODE, null, TestMode.class),
-                Arguments.of(ModeFactory.REAL_MODE, "data/library-test.csv", RealMode.class)
+                Arguments.of(ModeFactory.REAL_MODE, TEST_CSV, RealMode.class)
         );
     }
 

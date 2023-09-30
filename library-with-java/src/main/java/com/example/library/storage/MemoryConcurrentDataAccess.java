@@ -10,9 +10,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MemoryConcurrentDataAccess implements BookDataAccess {
 
-    private final Map<String, RentedBook> books = new ConcurrentHashMap<>();
+    private final Map<String, RentedBook> books;
 
     public MemoryConcurrentDataAccess(String path) {
+        books = new ConcurrentHashMap<>();
     }
 
     public void addBook(RentedBook book) {

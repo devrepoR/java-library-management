@@ -7,8 +7,13 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class MemoryLockDataAccess implements BookDataAccess {
-    private final Map<String, RentedBook> books = new HashMap<>();
-    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Map<String, RentedBook> books;
+    private final ReadWriteLock lock;
+
+    public MemoryLockDataAccess() {
+        books = new HashMap<>();
+        lock = new ReentrantReadWriteLock();
+    }
 
     public void addBook(RentedBook book) {
         lock.writeLock().lock();

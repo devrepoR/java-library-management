@@ -3,7 +3,7 @@ package com.example.library.actions;
 import com.example.library.application.Book;
 import com.example.library.application.RentedBook;
 import com.example.library.service.LibraryInterface;
-import com.example.library.service.LibraryInterfaceImpl;
+import com.example.library.service.LibraryBusiness;
 import com.example.library.storage.MemoryConcurrentDataAccess;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
@@ -41,7 +41,7 @@ class LibraryActionsTest {
     @ParameterizedTest
     void 메뉴에_따른메서드_호출(String methodType, Object param) {
         // Given
-        LibraryInterface libraryService = new LibraryInterfaceImpl(new MemoryConcurrentDataAccess(null));
+        LibraryInterface libraryService = new LibraryBusiness(new MemoryConcurrentDataAccess(null));
 
         LibraryActions registerBookAction = LibraryActions.findByName(methodType).get();
         registerBookAction.perform(libraryService, param);
@@ -51,7 +51,7 @@ class LibraryActionsTest {
     @Test
     void 도서_등록_테스트() {
         // Given
-        LibraryInterface libraryService = new LibraryInterfaceImpl(new MemoryConcurrentDataAccess(null));
+        LibraryInterface libraryService = new LibraryBusiness(new MemoryConcurrentDataAccess(null));
         Book expected = new Book("CS0001", "Clean Code", "Robert C. Martin", "100");
 
         // When
