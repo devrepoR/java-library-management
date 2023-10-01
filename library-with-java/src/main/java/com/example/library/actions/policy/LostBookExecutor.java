@@ -1,7 +1,7 @@
 package com.example.library.actions.policy;
 
 import com.example.library.actions.LibraryActionExecutor;
-import com.example.library.service.LibraryInterface;
+import com.example.library.application.LibraryInterface;
 
 public class LostBookExecutor implements LibraryActionExecutor<String, Void> {
     @Override

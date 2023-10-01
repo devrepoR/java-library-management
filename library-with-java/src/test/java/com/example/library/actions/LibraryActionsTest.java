@@ -1,10 +1,10 @@
 package com.example.library.actions;
 
-import com.example.library.application.Book;
-import com.example.library.application.RentedBook;
-import com.example.library.service.LibraryInterface;
-import com.example.library.service.LibraryBusiness;
-import com.example.library.storage.MemoryConcurrentDataAccess;
+import com.example.library.domain.Book;
+import com.example.library.domain.RentedBook;
+import com.example.library.application.LibraryInterface;
+import com.example.library.application.LibraryBusiness;
+import com.example.library.infrastructure.MemoryConcurrentDataAccess;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ class LibraryActionsTest {
 
     private static Stream<Arguments> argument() {
         return Stream.of(
-            Arguments.of("REGISTER_BOOK", new RentedBook(new Book("CS0001", "Clean Code", "Robert C. Martin", "100"))),
+            Arguments.of("REGISTER_BOOK", new RentedBook(new Book("CS0001", "Clean Code", "Robert C. Martin", 100))),
             Arguments.of("FIND_ALL_BOOK", null),
             Arguments.of("FIND_BOOK_BY_SUBJECT", "Clean Code")
         );
@@ -52,7 +52,7 @@ class LibraryActionsTest {
     void 도서_등록_테스트() {
         // Given
         LibraryInterface libraryService = new LibraryBusiness(new MemoryConcurrentDataAccess(null));
-        Book expected = new Book("CS0001", "Clean Code", "Robert C. Martin", "100");
+        Book expected = new Book("CS0001", "Clean Code", "Robert C. Martin", 100);
 
         // When
         RentedBook rentedBook = LibraryActions.findByName("REGISTER_BOOK")

@@ -2,7 +2,7 @@ package com.example.library.actions;
 
 
 import com.example.library.actions.policy.*;
-import com.example.library.service.LibraryInterface;
+import com.example.library.application.LibraryInterface;
 
 import java.util.Arrays;
 import java.util.Optional;
