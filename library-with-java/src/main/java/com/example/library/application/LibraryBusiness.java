@@ -60,12 +60,10 @@ public class LibraryBusiness implements LibraryInterface {
     public void returnBook(String isbn) {
         RentedBook rentedBook = findByIsbn(isbn, "Book is not found");
 
-        // 대여중인 책만 반납
-        if(!rentedBook.isRented()) {
-            throw new RuntimeException("상태가 대여중인 경우에만 반납처리 가능합니다.");
-        }
-        // 대여중 -> 정리중
-        boolean updated = dataAccess.updateBookStatus(isbn, RentedBook.BookStatus.ORGANIZING);
+        log.info("[LOG] [RETURN] [BOOK] [" + rentedBook + "]");
+        rentedBook.returnBook();
+
+        boolean updated = dataAccess.changeBook(rentedBook);
         if (!updated) {
             throw new RuntimeException("Book is already returned");
         }

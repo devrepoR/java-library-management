@@ -37,10 +37,6 @@ public class RentedBook {
         this.status = status;
     }
 
-    public static RentedBook availableBook(Book book) {
-        return new RentedBook(book, BookStatus.AVAILABLE);
-    }
-
     public boolean isReturned() {
         return returnedAt != null;
     }
@@ -123,6 +119,19 @@ public class RentedBook {
         }
 
         updateStatus(BookStatus.LOST);
+    }
+
+    public void returnBook() {
+        if (isAvailable()) {
+            throw new RuntimeException("대여 가능한 도서는 반납할 수 없습니다.");
+        } else if (isOrganized()) {
+            throw new RuntimeException("정리중인 도서는 반납할 수 없습니다.");
+        } else if (isReturned()) {
+            throw new RuntimeException("이미 반납된 도서입니다.");
+        }
+
+        updateStatus(BookStatus.AVAILABLE);
+        this.returnedAt = now();
     }
 
     public void updateStatus(BookStatus status) {
