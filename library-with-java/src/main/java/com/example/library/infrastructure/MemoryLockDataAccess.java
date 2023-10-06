@@ -47,22 +47,17 @@ public class MemoryLockDataAccess implements BookDataAccess {
         return books.size();
     }
 
-    public boolean updateBookStatus(String isbn, RentedBook.BookStatus newStatus) {
+    @Override
+    public boolean changeBook(RentedBook book) {
         lock.writeLock().lock();
         try {
-            RentedBook book = books.get(isbn);
-            if (book != null) {
-                book.updateStatus(newStatus);
+            if (books.containsKey(book.getIsbn())) {
+                books.put(book.getIsbn(), book);
                 return true;
             }
-            return false;
         } finally {
             lock.writeLock().unlock();
         }
-    }
-
-    @Override
-    public boolean changeBook(RentedBook book) {
         return false;
     }
 

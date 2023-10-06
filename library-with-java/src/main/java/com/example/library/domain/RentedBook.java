@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import static com.example.library.utils.FileConstant.FILE_DELIMITER;
 import static java.time.LocalDateTime.now;
@@ -38,7 +37,7 @@ public class RentedBook {
     }
 
     public boolean isReturned() {
-        return returnedAt != null;
+        return this.status == BookStatus.ORGANIZING && this.returnedAt != null;
     }
 
     public boolean isOrganizingTimeOver(Duration organizingDuration, LocalDateTime timeAt) {
@@ -79,10 +78,10 @@ public class RentedBook {
         return this.status == BookStatus.ORGANIZING;
     }
 
-    public void rent() {
-        if(isOrganized()) {
+    public void checkout() {
+        if (isOrganized()) {
             throw new RuntimeException("정리중인 도서는 반납할 수 없습니다.");
-        } else if(isRented()) {
+        } else if (isRented()) {
             throw new RuntimeException("대여중인 도서는 반납할 수 없습니다.");
         }
 
@@ -93,19 +92,19 @@ public class RentedBook {
     public void available() {
         if (isReturned()) {
             throw new RuntimeException("반납된 도서는 대여 가능으로 변경할 수 없습니다.");
-        } else if(isLost()) {
+        } else if (isLost()) {
             throw new RuntimeException("분실된 도서는 대여 가능으로 변경할 수 없습니다.");
-        } else if(isRented()) {
+        } else if (isRented()) {
             throw new RuntimeException("대여중인 도서는 대여 가능으로 변경할 수 없습니다.");
         }
         updateStatus(BookStatus.AVAILABLE);
     }
 
-    public void organize() { // return 시 정리중으로 변경
-        if (isOrganized()) {
+    public void checkIn() { // return 시 정리중으로 변경
+        if (isAvailable()) {
+            throw new RuntimeException("대여 가능한 도서는 정리중 상태로 변경할 수 없습니다.");
+        } else if (isOrganized()) {
             throw new RuntimeException("이미 정리중인 도서입니다.");
-        } else if (isRented()) {
-            throw new RuntimeException("대여중인 도서는 정리중으로 변경할 수 없습니다.");
         }
 
         updateStatus(BookStatus.ORGANIZING);
@@ -130,11 +129,11 @@ public class RentedBook {
             throw new RuntimeException("이미 반납된 도서입니다.");
         }
 
-        updateStatus(BookStatus.AVAILABLE);
+        updateStatus(BookStatus.ORGANIZING);
         this.returnedAt = now();
     }
 
-    public void updateStatus(BookStatus status) {
+    private void updateStatus(BookStatus status) {
         this.status = status;
     }
 
@@ -171,7 +170,6 @@ public class RentedBook {
         RENTED("대여중"),
         ORGANIZING("도서 정리중"),
         LOST("분실됨");
-        private static final Logger log = Logger.getLogger(BookStatus.class.getName());
         private final String title;
 
         BookStatus(String title) {

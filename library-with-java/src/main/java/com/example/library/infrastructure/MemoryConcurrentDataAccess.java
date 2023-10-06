@@ -2,10 +2,7 @@ package com.example.library.infrastructure;
 
 import com.example.library.domain.RentedBook;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MemoryConcurrentDataAccess implements BookDataAccess {
@@ -25,7 +22,9 @@ public class MemoryConcurrentDataAccess implements BookDataAccess {
     }
 
     public List<RentedBook> findAllBooks() {
-        return new ArrayList<>(books.values());
+        return books.values()
+                .stream()
+                .toList();
     }
 
     @Override
@@ -33,14 +32,6 @@ public class MemoryConcurrentDataAccess implements BookDataAccess {
         return books.size();
     }
 
-    public boolean updateBookStatus(String isbn, RentedBook.BookStatus newStatus) {
-        RentedBook book = books.get(isbn);
-        if (book != null) {
-            book.updateStatus(newStatus);
-            return true;
-        }
-        return false;
-    }
 
     @Override
     public boolean changeBook(RentedBook book) {

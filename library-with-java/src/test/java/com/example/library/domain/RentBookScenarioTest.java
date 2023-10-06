@@ -33,7 +33,7 @@ class RentBookScenarioTest {
     void 도서_대출중_테스트() {
 
         // when
-        rentedBook.rent();
+        rentedBook.checkout();
 
         // then
         assertThat(rentedBook.isRented()).isTrue();
@@ -44,10 +44,10 @@ class RentBookScenarioTest {
     void 도서_도서_정리중_테스트() {
 
         // when
-        rentedBook.organize();
+        rentedBook.checkIn();
 
         // then
-        assertThat(rentedBook.getStatus()).isEqualTo(RentedBook.BookStatus.ORGANIZING);
+        assertThat(rentedBook.isOrganized()).isTrue();
     }
 
     @Order(4)
@@ -55,9 +55,9 @@ class RentBookScenarioTest {
     void 도서_대여_가능_테스트() {
 
         // when
-        rentedBook.updateStatus(RentedBook.BookStatus.AVAILABLE);
+        rentedBook.available();
 
         // then
-        assertThat(rentedBook.getStatus()).isEqualTo(RentedBook.BookStatus.AVAILABLE);
+        assertThat(rentedBook.isAvailable()).isTrue();
     }
 }

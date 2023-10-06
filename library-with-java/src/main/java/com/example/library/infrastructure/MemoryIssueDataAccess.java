@@ -29,15 +29,6 @@ public class MemoryIssueDataAccess implements BookDataAccess {
         return books.size();
     }
 
-    public boolean updateBookStatus(String isbn, RentedBook.BookStatus newStatus) {
-        RentedBook book = books.get(isbn);
-        if (book != null) {
-            book.updateStatus(newStatus);
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public boolean changeBook(RentedBook book) {
         if (books.containsKey(book.getIsbn())) {

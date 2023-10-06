@@ -30,7 +30,7 @@ class RentedBookTest {
         assertThat(rentedBook.isAvailable()).isTrue();
 
         // when
-        rentedBook.rent();
+        rentedBook.checkout();
 
         // then
         assertThat(rentedBook.isRented()).isTrue();
@@ -42,13 +42,13 @@ class RentedBookTest {
         RentedBook rentedBook = new RentedBook(book);
 
         // when
-        rentedBook.rent();
+        rentedBook.checkout();
 
         // then
         assertThat(rentedBook.isRented()).isTrue();
 
         // when
-        rentedBook.organize();
+        rentedBook.checkIn();
 
         // then
         assertThat(rentedBook.isOrganized()).isTrue();
@@ -66,7 +66,7 @@ class RentedBookTest {
         RentedBook rentedBook = new RentedBook(book);
 
         // when
-        rentedBook.rent();
+        rentedBook.checkout();
 
         // then
         assertThat(rentedBook.isRented()).isTrue();

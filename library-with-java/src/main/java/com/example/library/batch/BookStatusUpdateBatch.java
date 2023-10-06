@@ -38,7 +38,8 @@ public class BookStatusUpdateBatch {
                 .filter(rentedBook -> rentedBook.isOrganizingTimeOver(Duration.ofMinutes(5), LocalDateTime.now()))
                 .forEach(rentedBook -> {
                     log.info("Book Updated ORGANIZING to AVAILABLE: " + rentedBook.getIsbn());
-                    dataAccess.updateBookStatus(rentedBook.getIsbn(), RentedBook.BookStatus.AVAILABLE);
+                    rentedBook.available();
+                    dataAccess.changeBook(rentedBook);
                 });
         log.info("[LOG] [BATCH] [UPDATE] [END]");
     }

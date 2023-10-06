@@ -25,7 +25,7 @@ class BookStatusUpdateBatchTest {
     @BeforeEach
     void setUp() {
         fileDataAccess = new FileChannelDataAccess(LIBRARY_CSV);
-        new BookStatusUpdateBatch(fileDataAccess);
+        BookStatusUpdateBatch bookStatusUpdateBatch = new BookStatusUpdateBatch(fileDataAccess);
     }
 
     @Order(1)

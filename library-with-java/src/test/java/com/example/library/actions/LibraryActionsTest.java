@@ -38,7 +38,7 @@ class LibraryActionsTest {
     }
 
     @MethodSource("argument")
-    @ParameterizedTest
+    @ParameterizedTest(name = "메뉴에 따른 메서드 호출 - {0}, {1}")
     void 메뉴에_따른메서드_호출(String methodType, Object param) {
         // Given
         LibraryInterface libraryService = new LibraryBusiness(new MemoryConcurrentDataAccess(null));

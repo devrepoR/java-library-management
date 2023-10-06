@@ -74,14 +74,15 @@ public class FileChannelDataAccess implements BookDataAccess {
     }
 
     @Override
-    public boolean updateBookStatus(String isbn, RentedBook.BookStatus newStatus) {
+    public boolean changeBook(RentedBook book) {
         readWriteLock.writeLock().lock();
         try {
             List<RentedBook> books = readBooks();
             boolean isUpdated = false;
-            for (RentedBook book : books) {
-                if (book.getIsbn().equals(isbn)) {
-                    book.updateStatus(newStatus);
+            for (int i = 0; i < books.size(); i++) {
+                RentedBook rentedBook = books.get(i);
+                if (rentedBook.getIsbn().equals(book.getIsbn())) {
+                    books.set(i, book);
                     isUpdated = true;
                     break;
                 }
@@ -91,14 +92,11 @@ public class FileChannelDataAccess implements BookDataAccess {
                 writeBooks(books);
             }
             return isUpdated;
+        } catch(Exception e) {
+            throw new RuntimeException("도서 정보 변경 실패", e);
         } finally {
             readWriteLock.writeLock().unlock();
         }
-    }
-
-    @Override
-    public boolean changeBook(RentedBook book) {
-        return false;
     }
 
     @Override
@@ -118,8 +116,10 @@ public class FileChannelDataAccess implements BookDataAccess {
         return readBooks().size();
     }
 
-    public void deleteAll() throws IOException {
-        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING)) {}
+    public void deleteAll() {
+        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING)) {} catch (IOException e) {
+            throw new RuntimeException("데이터 삭제 실패", e);
+        }
     }
 
     private void validatePath() {

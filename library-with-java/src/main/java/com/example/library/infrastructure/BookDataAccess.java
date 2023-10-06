@@ -14,8 +14,7 @@ public interface BookDataAccess {
 
     int countBooks();
 
-    boolean updateBookStatus(String isbn, RentedBook.BookStatus newStatus);
-
     boolean changeBook(RentedBook book);
+
     boolean removeBookByIsbn(String isbn);
 }

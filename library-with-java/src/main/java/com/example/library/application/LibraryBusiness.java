@@ -47,7 +47,7 @@ public class LibraryBusiness implements LibraryInterface {
         RentedBook availableBook = findByIsbn(isbn, "Book is not found");
 
         log.info("[LOG] [RENT] [BOOK] [" + availableBook + "]");
-        availableBook.rent();
+        availableBook.checkout();
         boolean changed = dataAccess.changeBook(availableBook);
         if (!changed) {
             throw new RuntimeException("Book is already rented");
@@ -76,8 +76,7 @@ public class LibraryBusiness implements LibraryInterface {
         log.info("[LOG] [LOST] [BOOK] [" + rentedBook + "]");
         rentedBook.lost();
 
-        // 대여중 -> 분실
-        boolean updated = dataAccess.updateBookStatus(isbn, RentedBook.BookStatus.LOST);
+        boolean updated = dataAccess.changeBook(rentedBook);
         if (!updated) {
             throw new RuntimeException("Book is already lost");
         }

@@ -10,10 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
@@ -69,32 +66,27 @@ public class FileDataAccess implements BookDataAccess {
 
     @Override
     public List<RentedBook> findAllBooks() {
-        return readBooks();
-    }
-
-    @Override
-    public boolean updateBookStatus(String isbn, RentedBook.BookStatus newStatus) {
-        List<RentedBook> books = readBooks(); // 모든 도서 정보를 읽어옴
-        boolean isUpdated = false;
-
-        for (RentedBook book : books) {
-            if (book.getIsbn().equals(isbn)) {
-                book.updateStatus(newStatus); // 상태 변경
-                isUpdated = true;
-                log.info("[LOG] [UPDATED] => [" + isUpdated + "] [" + book + "]");
-                break; // ISBN이 고유하다고 가정하고, 찾으면 loop 종료
-            }
-        }
-        if (isUpdated) {
-            writeBooks(books); // 변경된 도서 정보로 전체 파일 다시 쓰기
-        }
-
-        return isUpdated;
+        return Collections.unmodifiableList(readBooks());
     }
 
     @Override
     public boolean changeBook(RentedBook book) {
-        return false;
+        List<RentedBook> books = readBooks(); // 모든 도서 정보를 읽어옴
+        boolean isUpdated = false;
+
+        for(int i = 0; i < books.size(); i++) {
+            if(books.get(i).getIsbn().equals(book.getIsbn())) {
+                books.set(i, book);
+                isUpdated = true;
+                break;
+            }
+        }
+
+        if(isUpdated) {
+            writeBooks(books);
+        }
+
+        return isUpdated;
     }
 
     private List<RentedBook> readBooks() {
@@ -147,16 +139,16 @@ public class FileDataAccess implements BookDataAccess {
         }
     }
 
-    public void deleteAll() throws IOException {
+    public void deleteAll() {
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING)) {
         } catch (IOException e) {
-            throw new IOException("Failed to clear the file content at " + path, e);
+            throw new RuntimeException("Failed to clear the file content at " + path, e);
         }
     }
 
     // Creating a BufferedWriter instance in a separate method to avoid duplication
     private BufferedWriter getBufferedWriter() throws IOException {
-        return Files.newBufferedWriter(path, StandardOpenOption.CREATE);
+        return Files.newBufferedWriter(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     }
 
     private RentedBook csvToBook(String csv) {

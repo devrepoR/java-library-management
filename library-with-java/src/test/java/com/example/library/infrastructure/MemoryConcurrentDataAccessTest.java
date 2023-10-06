@@ -59,7 +59,10 @@ class MemoryConcurrentDataAccessTest {
         for (int i = 0; i < SIZE; i++) {
             executorService.execute(() -> {
                 int seq = sequence.getAndIncrement();
-                memoryLockDataAccess.updateBookStatus("CS" + seq, RentedBook.BookStatus.RENTED);
+
+                RentedBook rentedBook = memoryLockDataAccess.findBookByIsbn("CS" + seq).get();
+                rentedBook.checkout();
+
                 countDownLatch.countDown();
             });
         }

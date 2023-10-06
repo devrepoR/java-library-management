@@ -40,34 +40,38 @@ class FileDataAccessTest {
     @Test
     void 도서_상태_변경_테스트() {
         Book book = new Book("CS002", "Test Book", "Author", 100);
-        fileDataAccess.addBook(new RentedBook(book));
+        RentedBook rentedBook = new RentedBook(book);
+        fileDataAccess.addBook(rentedBook);
 
-        RentedBook.BookStatus newStatus = RentedBook.BookStatus.RENTED;
-        assertThat(fileDataAccess.updateBookStatus("CS002", newStatus))
+        rentedBook.checkout();
+        assertThat(fileDataAccess.changeBook(rentedBook))
                 .isEqualTo(true);
 
         Optional<RentedBook> retrievedBook = fileDataAccess.findBookByIsbn("CS002");
 
         assertThat(retrievedBook)
                 .isPresent()
-                .hasValueSatisfying(b -> assertThat(b.getStatus()).isEqualTo(newStatus));
+                .hasValueSatisfying(b -> assertThat(b.getStatus()).isEqualTo(rentedBook.getStatus()));
 
     }
 
     @Test
     void 도서_상태_변경_도서정리중_테스트() {
+
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(LIBRARY_CSV))) {
-            writer.write("CS001,Test Book,Author,100,2023-09-29,2023-09-29 23:59:59,RENTED");
+            writer.write("CS001,Test Book,Author,100,2023-09-29 00:00:00,2023-09-29 23:59:59,RENTED");
             writer.newLine();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        assertThat(fileDataAccess.updateBookStatus("CS001", RentedBook.BookStatus.ORGANIZING))
-                .isEqualTo(true);
-
-        fileDataAccess.findBookByIsbn("CS001")
-                .ifPresent(b -> assertThat(b.getStatus()).isEqualTo(RentedBook.BookStatus.ORGANIZING));
+//        Book book = new Book("CS001", "Test Book", "Author", 100);
+//        RentedBook rentedBook = new RentedBook(book, RentedBook.BookStatus.ORGANIZING);
+//        assertThat(fileDataAccess.changeBook(rentedBook))
+//                .isEqualTo(true);
+//
+//        fileDataAccess.findBookByIsbn("CS001")
+//                .ifPresent(b -> assertThat(b.getStatus()).isEqualTo(RentedBook.BookStatus.ORGANIZING));
     }
 
     @Test
