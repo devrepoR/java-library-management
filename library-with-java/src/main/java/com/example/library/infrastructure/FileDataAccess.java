@@ -92,6 +92,11 @@ public class FileDataAccess implements BookDataAccess {
         return isUpdated;
     }
 
+    @Override
+    public boolean changeBook(RentedBook book) {
+        return false;
+    }
+
     private List<RentedBook> readBooks() {
         Map<String, RentedBook> bookMap = new ConcurrentHashMap<>();
 

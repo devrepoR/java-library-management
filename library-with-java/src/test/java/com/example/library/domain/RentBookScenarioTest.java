@@ -33,7 +33,7 @@ class RentBookScenarioTest {
     void 도서_대출중_테스트() {
 
         // when
-        rentedBook.returnBook();
+        rentedBook.rent();
 
         // then
         assertThat(rentedBook.isRented()).isTrue();

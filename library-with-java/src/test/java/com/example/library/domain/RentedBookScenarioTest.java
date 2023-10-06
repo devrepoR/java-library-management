@@ -35,7 +35,7 @@ class RentedBookScenarioTest {
         RentedBook rentedBook = new RentedBook(book);
 
         // when
-        rentedBook.returnBook();
+        rentedBook.rent();
 
         // then
         assertThat(rentedBook.isAvailable()).isFalse();
@@ -46,7 +46,7 @@ class RentedBookScenarioTest {
     void 도서_정리중_변경_테스트() {
         // given
         RentedBook rentedBook = new RentedBook(book);
-        rentedBook.returnBook();
+        rentedBook.rent();
 
         // when
         rentedBook.organize();
@@ -59,7 +59,7 @@ class RentedBookScenarioTest {
     void 도서_분실_변경_테스트() {
         // given
         RentedBook rentedBook = new RentedBook(book);
-        rentedBook.returnBook();
+        rentedBook.rent();
 
         // when
         rentedBook.lost();

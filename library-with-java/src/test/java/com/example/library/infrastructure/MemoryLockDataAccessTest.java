@@ -12,7 +12,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @SuppressWarnings("NonAsciiCharacters")
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
@@ -46,6 +47,6 @@ class MemoryLockDataAccessTest {
         // Wait for all threads to finish
         countDownLatch.await();
 
-        assertThat(memoryLockDataAccess.findAllBooks().size()).isEqualTo(SIZE);
+        assertThat(memoryLockDataAccess.findAllBooks()).hasSize(SIZE);
     }
 }

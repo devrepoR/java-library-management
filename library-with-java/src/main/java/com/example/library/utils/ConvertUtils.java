@@ -19,6 +19,9 @@ public class ConvertUtils {
     }
 
     public static <S, T> T convert(S field, Function<S, T> parseFunction, String errorMessage) {
+        if (field == null) {
+            return null; // or return some default value
+        }
         try {
             return parseFunction.apply(field);
         } catch (Exception e) {
@@ -31,6 +34,9 @@ public class ConvertUtils {
     }
 
     public static String convertLocalDateTimeToString(LocalDateTime dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
         return convert(dateTime, dt -> dt.format(FORMAT_ISO_DATE), "날짜 시간 변환에 실패하였습니다.");
     }
 

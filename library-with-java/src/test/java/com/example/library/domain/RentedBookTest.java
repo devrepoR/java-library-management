@@ -19,7 +19,7 @@ class RentedBookTest {
                 "CS0001"
                 , "Clean Code"
                 , "로버트 C. 마틴"
-                , "500"
+                , 500
         );
     }
 
@@ -30,7 +30,7 @@ class RentedBookTest {
         assertThat(rentedBook.isAvailable()).isTrue();
 
         // when
-        rentedBook.returnBook();
+        rentedBook.rent();
 
         // then
         assertThat(rentedBook.isRented()).isTrue();
@@ -42,7 +42,7 @@ class RentedBookTest {
         RentedBook rentedBook = new RentedBook(book);
 
         // when
-        rentedBook.returnBook();
+        rentedBook.rent();
 
         // then
         assertThat(rentedBook.isRented()).isTrue();
@@ -66,7 +66,7 @@ class RentedBookTest {
         RentedBook rentedBook = new RentedBook(book);
 
         // when
-        rentedBook.returnBook();
+        rentedBook.rent();
 
         // then
         assertThat(rentedBook.isRented()).isTrue();

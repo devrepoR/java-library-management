@@ -38,6 +38,15 @@ public class MemoryIssueDataAccess implements BookDataAccess {
         return false;
     }
 
+    @Override
+    public boolean changeBook(RentedBook book) {
+        if (books.containsKey(book.getIsbn())) {
+            books.put(book.getIsbn(), book);
+            return true;
+        }
+        return false;
+    }
+
     public boolean removeBookByIsbn(String isbn) {
         return books.remove(isbn) != null;
     }

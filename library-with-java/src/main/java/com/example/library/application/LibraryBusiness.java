@@ -44,12 +44,12 @@ public class LibraryBusiness implements LibraryInterface {
 
     @Override
     public RentedBook rentBook(String isbn) {
-        RentedBook rentedBook = findByIsbn(isbn, "Book is not found");
+        RentedBook availableBook = findByIsbn(isbn, "Book is not found");
 
-        checkBookRent(rentedBook);
-
-        boolean updated = dataAccess.updateBookStatus(isbn, RentedBook.BookStatus.RENTED);
-        if (!updated) {
+        log.info("[LOG] [RENT] [BOOK] [" + availableBook + "]");
+        availableBook.rent();
+        boolean changed = dataAccess.changeBook(availableBook);
+        if (!changed) {
             throw new RuntimeException("Book is already rented");
         }
 
@@ -75,11 +75,8 @@ public class LibraryBusiness implements LibraryInterface {
     public void lostBook(String isbn) {
         RentedBook rentedBook = findByIsbn(isbn, "Book is not found");
 
-        RentedBook.BookStatus status = rentedBook.getStatus();
-        // 상태가 대여 중이 아니면, 책을 분실할 수 없습니다.
-        if (status != RentedBook.BookStatus.RENTED) {
-            throw new RuntimeException("상태가 대여중인 경우에만 분실처리 가능합니다.");
-        }
+        log.info("[LOG] [LOST] [BOOK] [" + rentedBook + "]");
+        rentedBook.lost();
 
         // 대여중 -> 분실
         boolean updated = dataAccess.updateBookStatus(isbn, RentedBook.BookStatus.LOST);

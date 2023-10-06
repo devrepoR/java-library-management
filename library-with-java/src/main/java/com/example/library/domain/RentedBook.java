@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import static com.example.library.utils.FileConstant.FILE_DELIMITER;
@@ -13,12 +14,12 @@ import static java.time.LocalDateTime.now;
 
 public class RentedBook {
     private final Book book;
-    private final LocalDateTime rentedAt;
+    private LocalDateTime rentedAt;
     private BookStatus status;
     private LocalDateTime returnedAt;
 
     public RentedBook(Book book) {
-        this(book, now(), BookStatus.ORGANIZING);
+        this(book, now(), BookStatus.AVAILABLE);
     }
 
     public RentedBook(Book book, BookStatus status) {
@@ -36,9 +37,8 @@ public class RentedBook {
         this.status = status;
     }
 
-    public void returnBook() {
-        this.status = BookStatus.RENTED;
-        this.returnedAt = now();
+    public static RentedBook availableBook(Book book) {
+        return new RentedBook(book, BookStatus.AVAILABLE);
     }
 
     public boolean isReturned() {
@@ -67,24 +67,12 @@ public class RentedBook {
         return returnedAt;
     }
 
-    public void available() {
-        this.status = BookStatus.AVAILABLE;
-    }
-
     public boolean isAvailable() {
         return this.status == BookStatus.AVAILABLE;
     }
 
     public boolean isRented() {
         return this.status == BookStatus.RENTED;
-    }
-
-    public void organize() {
-        this.status = BookStatus.ORGANIZING;
-    }
-
-    public void updateStatus(BookStatus status) {
-        this.status = status;
     }
 
     public BookStatus getStatus() {
@@ -95,8 +83,50 @@ public class RentedBook {
         return this.status == BookStatus.ORGANIZING;
     }
 
+    public void rent() {
+        if(isOrganized()) {
+            throw new RuntimeException("정리중인 도서는 반납할 수 없습니다.");
+        } else if(isRented()) {
+            throw new RuntimeException("대여중인 도서는 반납할 수 없습니다.");
+        }
+
+        updateStatus(BookStatus.RENTED);
+        this.rentedAt = now();
+    }
+
+    public void available() {
+        if (isReturned()) {
+            throw new RuntimeException("반납된 도서는 대여 가능으로 변경할 수 없습니다.");
+        } else if(isLost()) {
+            throw new RuntimeException("분실된 도서는 대여 가능으로 변경할 수 없습니다.");
+        } else if(isRented()) {
+            throw new RuntimeException("대여중인 도서는 대여 가능으로 변경할 수 없습니다.");
+        }
+        updateStatus(BookStatus.AVAILABLE);
+    }
+
+    public void organize() { // return 시 정리중으로 변경
+        if (isOrganized()) {
+            throw new RuntimeException("이미 정리중인 도서입니다.");
+        } else if (isRented()) {
+            throw new RuntimeException("대여중인 도서는 정리중으로 변경할 수 없습니다.");
+        }
+
+        updateStatus(BookStatus.ORGANIZING);
+    }
+
     public void lost() {
-        this.status = BookStatus.LOST;
+        if (isAvailable()) {
+            throw new RuntimeException("대여 가능한 도서는 분실됨 상태로 변경할 수 없습니다.");
+        } else if (isOrganized()) {
+            throw new RuntimeException("정리중인 도서는 분실됨 상태로 변경할 수 없습니다.");
+        }
+
+        updateStatus(BookStatus.LOST);
+    }
+
+    public void updateStatus(BookStatus status) {
+        this.status = status;
     }
 
     public boolean isLost() {
@@ -122,7 +152,7 @@ public class RentedBook {
                 , book.getSubject()
                 , book.getAuthor()
                 , String.valueOf(book.getTotalPageCnt())
-                , ConvertUtils.convertLocalDateTimeToString(this.rentedAt)
+                , Optional.of(ConvertUtils.convertLocalDateTimeToString(this.rentedAt)).orElse(null)
                 , ConvertUtils.convertLocalDateTimeToString(this.returnedAt)
                 , status.name());
     }

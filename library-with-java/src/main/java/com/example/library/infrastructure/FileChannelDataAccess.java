@@ -97,6 +97,11 @@ public class FileChannelDataAccess implements BookDataAccess {
     }
 
     @Override
+    public boolean changeBook(RentedBook book) {
+        return false;
+    }
+
+    @Override
     public boolean removeBookByIsbn(String isbn) {
         List<RentedBook> books = readBooks();
         int initialSize = books.size();

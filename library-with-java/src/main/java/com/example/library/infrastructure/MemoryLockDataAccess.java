@@ -61,6 +61,11 @@ public class MemoryLockDataAccess implements BookDataAccess {
         }
     }
 
+    @Override
+    public boolean changeBook(RentedBook book) {
+        return false;
+    }
+
     public boolean removeBookByIsbn(String isbn) {
         lock.writeLock().lock();
         try {

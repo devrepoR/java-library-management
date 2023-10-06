@@ -49,7 +49,9 @@ class MemoryIssueDataAccessTest {
         // Wait for all threads to finish
         countDownLatch.await();
 
-        assertThat(memoryIssueDataAccess.countBooks()).isNotEqualTo(SIZE);
+        int actual = memoryIssueDataAccess.countBooks();
+        System.out.println("actual = " + actual);
+        assertThat(actual).isNotEqualTo(SIZE);
 
     }
 }
